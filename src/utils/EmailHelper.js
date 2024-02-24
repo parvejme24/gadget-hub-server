@@ -18,3 +18,5 @@ const EmailSend = async (EmailTo, EmailText, EmailSubject) => {
 
   return await transport.sendMail(mailOption);
 };
+
+module.exports = EmailSend;
