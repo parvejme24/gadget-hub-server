@@ -25,10 +25,18 @@ const ProductSchema = mongoose.Schema(
       type: String,
       require: true,
     },
-    starRating: {
-      type: String,
+    colors: {
+      type: [String],
       require: true,
     },
+    reviews: [
+      {
+        user: String,
+        rating: Number,
+        comment: String,
+      },
+    ],
+    specificaitons: [String],
     stock: {
       type: Boolean,
       require: true,
