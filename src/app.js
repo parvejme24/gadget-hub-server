@@ -11,8 +11,6 @@ const xss = require("xss-clean");
 const hpp = require("hpp");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const mongoose = require("mongoose");
-const path = require("path");
 
 // middleware
 app.use(cookieParser());
