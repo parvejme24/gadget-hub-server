@@ -1,6 +1,9 @@
 const express = require("express");
 const app = new express();
 const router = require("./src/api");
+const morgan = require("morgan");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
 // security middlware import
 const rateLimit = require("express-rate-limit");
@@ -8,20 +11,28 @@ const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 3000 });
+const cors = require("cors");
+const corsOptions = {
+  origin: ["*"],
+  credentials: true,
+  optionSuccessStatus: 200,
+};
 
 // security middleware use
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(helmet());
 app.use(mongoSanitize());
 app.use(xss());
 app.use(hpp());
 app.use(limiter);
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb" }));
+
+// non security middleware use
+app.use(morgan("dev"));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
 // api endpoints
 app.use("/api/v1", router);
