@@ -1,9 +1,8 @@
-const app = require("./src/app");
+const app = require("./app");
 const connectDB = require("./src/config/db");
-require("dotenv").config();
-const port = process.env.PORT || 6060;
+const { serverPort } = require("./src/secret");
 
-app.listen(port, async () => {
-  console.log(`gadget-hub server is running at http://localhost:${port}`);
+app.listen(serverPort, async () => {
+  console.log(`Gadget Hub is running at: http://localhost:${serverPort}`);
   await connectDB();
 });

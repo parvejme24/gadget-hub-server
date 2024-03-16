@@ -1,14 +1,16 @@
 const mongoose = require("mongoose");
 const { mongodbURL } = require("../secret");
-const connectDB = async (options = {}) => {
+
+const connectDB = async () => {
   try {
-    await mongoose.connect(mongodbURL, options);
-    console.log("connection to DB is successful...");
+    await mongoose.connect(mongodbURL);
+    console.log("Connection to DB is successful...");
+
     mongoose.connection.on("error", (error) => {
-      console.error("DB connection error", error);
+      console.error("DB connection error: ", error);
     });
   } catch (error) {
-    console.error("coundl not connect to db", error.toString());
+    console.error("Could not connect to DB: ", error.toString());
   }
 };
 
