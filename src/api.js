@@ -5,6 +5,6 @@ const router = express.Router();
 const routers = [require("./routers/ProductRouter")];
 
 // dynamically apply routers
-routers.forEach((router) => router.use(router));
+routers.forEach((route) => router.use(route));
 
 module.exports = router;
