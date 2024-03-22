@@ -13,6 +13,7 @@ const xss = require("xss-clean");
 const hpp = require("hpp");
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 3000 });
 const cors = require("cors");
+const productRouter = require("./src/routers/ProductRouter");
 const corsOptions = {
   origin: ["*"],
   credentials: true,
@@ -40,7 +41,7 @@ app.use("/", (req, res) => {
 });
 
 // api endpoints
-app.use("/api/v1", router);
+app.use("/api/v1", productRouter);
 
 app.get("*", (req, res) => {
   res.status(401).json({ message: "Invalid URL" });
