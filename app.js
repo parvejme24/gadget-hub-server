@@ -2,13 +2,14 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const createError = require("http-errors");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
 const cors = require("cors");
-const productRouter = require("./src/routers/ProductRouter");
+const router = require("./src/api");
 
 const app = express();
 
@@ -18,7 +19,7 @@ const corsOptions = {
   credentials: true,
   optionSuccessStatus: 200,
 };
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 3000 });
+const limiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 3000 });
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
@@ -41,11 +42,24 @@ app.get("/", (req, res) => {
 });
 
 // API endpoints
-app.use("/api/v1", productRouter);
+app.use("/api/v1", router);
 
 // Middleware for handling invalid URLs
 app.get("*", (req, res) => {
   res.status(404).json({ message: "Invalid URL" });
+});
+
+// client site error
+app.use((req, res, next) => {
+  next(createError(404, { message: "route not found" }));
+});
+
+// server error
+app.use((err, req, res, next) => {
+  return res.status(err.status || 500).json({
+    success: false,
+    message: err.message,
+  });
 });
 
 module.exports = app;
