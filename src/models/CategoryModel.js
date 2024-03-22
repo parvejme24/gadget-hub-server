@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const CategoryData = mongoose.Schema({
+const CategorySchema = mongoose.Schema({
   category_name: {
     type: String,
     require: true,
@@ -18,5 +18,5 @@ const CategoryData = mongoose.Schema({
   },
 });
 
-const CategoryModel = mongoose.model("categories", CategoryData);
+const CategoryModel = mongoose.model("categories", CategorySchema);
 module.exports = CategoryModel;
