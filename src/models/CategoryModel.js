@@ -12,6 +12,10 @@ const CategoryData = mongoose.Schema({
   subcategories: {
     type: [String],
   },
+  createdDate: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 const CategoryModel = mongoose.model("categories", CategoryData);
