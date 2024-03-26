@@ -2,30 +2,47 @@ const mongoose = require("mongoose");
 
 const ProducsSchema = mongoose.Schema(
   {
-    productName: {
+    title: {
       type: String,
     },
-    productCode: {
+    shortDescription: {
       type: String,
     },
-    productImage: {
+    price: {
       type: String,
     },
-    unitPrice: {
+    discount: {
+      type: Boolean,
+    },
+    discountPrice: {
       type: String,
     },
-    quantity: {
+    image: {
       type: String,
+      require: true,
     },
-    totalPrice: {
+    star: {
       type: String,
+      require: true,
     },
-    createdDate: {
-      type: Date,
-      default: Date.now(),
+    stock: {
+      type: Boolean,
+      require: true,
+    },
+    remark: {
+      type: String,
+      require: true,
+    },
+    category: {
+      type: String,
+      require: true,
+    },
+    brand: {
+      type: String,
+      require: true,
     },
   },
-  { versionKey: false }
+  { timestamps: true, versionKey: false }
 );
 
 const ProductsModel = mongoose.model("products", ProducsSchema);

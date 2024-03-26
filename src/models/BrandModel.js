@@ -10,7 +10,6 @@ const BrandSchema = mongoose.Schema(
     brandImage: {
       type: String,
       require: true,
-      unique: true,
     },
   },
   { timestamps: true, versionKey: false }
