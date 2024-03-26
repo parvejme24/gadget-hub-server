@@ -8,4 +8,3 @@ exports.ProductReviewList = async (req, res) => {};
 exports.ProductListByRemark = async (req, res) => {};
 exports.ProductDetails = async (req, res) => {};
 exports.CreateProductReview = async (req, res) => {};
-exports.CreateProductReview = async (req, res) => {};
