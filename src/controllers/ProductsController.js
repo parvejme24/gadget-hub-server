@@ -1,49 +1,11 @@
-const ProductsModel = require("../models/ProductsModel");
-
-// Create new product
-exports.CreateProduct = (req, res) => {
-  let product = req.body;
-  ProductsModel.createOne(product, (err, data) => {
-    if (err) {
-      return res.status(400).json({ status: "fail", error: err });
-    }
-    res.status(201).json({ status: "success", data: data });
-  });
-};
-
-// Read products
-exports.ReadProduct = (req, res) => {
-  let query = {};
-  let projection = { productName: 1, price: 1, description: 1, discount: 1 };
-  ProductsModel.find(query, projection, (err, data) => {
-    if (err) {
-      return res.status(400).json({ status: "fail", error: err });
-    }
-    res.status(200).json({ status: "success", data: data });
-  });
-};
-
-// Update product
-exports.UpdateProduct = (req, res) => {
-  let id = req.params.id;
-  let query = { _id: id };
-  let updatedProduct = req.body;
-  ProductsModel.updateOne(query, updatedProduct, (err, data) => {
-    if (err) {
-      return res.status(400).json({ status: "fail", error: err });
-    }
-    res.status(200).json({ status: "success", data: data });
-  });
-};
-
-// Delete product
-exports.DeleteProduct = (req, res) => {
-  let id = req.params.id;
-  let query = { _id: id };
-  ProductsModel.deleteOne(query, (err, data) => {
-    if (err) {
-      return res.status(400).json({ status: "fail", error: err });
-    }
-    res.status(200).json({ status: "success", data: data });
-  });
-};
+exports.ProductBrandList = async (req, res) => {};
+exports.ProductCategoryList = async (req, res) => {};
+exports.ProductSliderList = async (req, res) => {};
+exports.ProductListByBrand = async (req, res) => {};
+exports.ProductListBySemilier = async (req, res) => {};
+exports.ProductListByKeywork = async (req, res) => {};
+exports.ProductReviewList = async (req, res) => {};
+exports.ProductListByRemark = async (req, res) => {};
+exports.ProductDetails = async (req, res) => {};
+exports.CreateProductReview = async (req, res) => {};
+exports.CreateProductReview = async (req, res) => {};
