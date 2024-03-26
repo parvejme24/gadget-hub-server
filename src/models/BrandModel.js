@@ -1,19 +1,20 @@
 const mongoose = require("mongoose");
 
-const BrandSchema = mongoose.Schema({
-  brand: {
-    type: String,
-    require: true,
+const BrandSchema = mongoose.Schema(
+  {
+    brandName: {
+      type: String,
+      require: true,
+      unique: true,
+    },
+    brandLogo: {
+      type: String,
+      require: true,
+      unique: true,
+    },
   },
-  logo: {
-    type: String,
-    require: true,
-  },
-  createdDate: {
-    type: Date,
-    default: Date.now(),
-  },
-});
+  { timestamps: true, versionKey: false }
+);
 
 const BrandModel = mongoose.model("brands", BrandSchema);
 module.exports = BrandModel;

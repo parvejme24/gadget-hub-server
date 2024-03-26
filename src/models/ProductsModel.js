@@ -4,22 +4,18 @@ const ProducsSchema = mongoose.Schema(
   {
     productName: {
       type: String,
-      require: true,
     },
     productCode: {
       type: String,
     },
     productImage: {
       type: String,
-      require: true,
     },
     unitPrice: {
       type: String,
-      require: true,
     },
     quantity: {
       type: String,
-      require: true,
     },
     totalPrice: {
       type: String,

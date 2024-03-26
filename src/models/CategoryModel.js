@@ -16,6 +16,10 @@ const CategorySchema = mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  updatedDated: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 const CategoryModel = mongoose.model("categories", CategorySchema);
