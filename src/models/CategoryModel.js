@@ -1,26 +1,21 @@
 const mongoose = require("mongoose");
 
-const CategorySchema = mongoose.Schema({
-  category_name: {
-    type: String,
-    require: true,
+const CategorySchema = mongoose.Schema(
+  {
+    categoryName: {
+      type: String,
+      require: true,
+    },
+    categoryImage: {
+      type: String,
+      require: true,
+    },
+    subcategories: {
+      type: [String],
+    },
   },
-  category_image: {
-    type: String,
-    require: true,
-  },
-  subcategories: {
-    type: [String],
-  },
-  createdDate: {
-    type: Date,
-    default: Date.now(),
-  },
-  updatedDated: {
-    type: Date,
-    default: Date.now(),
-  },
-});
+  { timestamps: true, versionKey: false }
+);
 
 const CategoryModel = mongoose.model("categories", CategorySchema);
 module.exports = CategoryModel;
