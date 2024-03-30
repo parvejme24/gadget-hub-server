@@ -23,7 +23,16 @@ exports.ProductSliderList = async (req, res) => {
   return res.status(200).json(result);
 };
 
-exports.ProductListByBrand = async (req, res) => {};
+exports.ProductListByBrand = async (req, res) => {
+  let result = await ListByBrandService();
+  return res.status(200).json(result);
+};
+
+exports.ProductListByCategory = async (req, res) => {
+  let result = await ListByCategoryService();
+  return res.status(200).json(result);
+};
+
 exports.ProductListBySemilier = async (req, res) => {};
 exports.ProductListByKeywork = async (req, res) => {};
 exports.ProductReviewList = async (req, res) => {};
