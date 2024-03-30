@@ -15,7 +15,7 @@ const ProductSlidersSchema = mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: true, versionKey: true }
+  { timestamps: true, versionKey: false }
 );
 
 const ProductsSlidersModel = mongoose.model(

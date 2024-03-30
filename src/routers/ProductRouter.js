@@ -2,18 +2,42 @@ const express = require("express");
 const productRouter = express.Router();
 
 // import controller
-import ProductController from "../controllers/ProductsController";
+const ProductController = require("../controllers/ProductsController");
 
 // define product controller
-productRouter.post("/products", ProductController.ProductBrandList);
-productRouter.get("/products", ProductController.ProductCategoryList);
-productRouter.get("/products/:id", ProductController.ProductSliderList);
-productRouter.get("/products/:id", ProductController.ProductListByBrand);
-productRouter.get("/products/:id", ProductController.ProductListBySemilier);
-productRouter.get("/products/:id", ProductController.ProductListByKeywork);
-productRouter.get("/products/:id", ProductController.ProductReviewList);
-productRouter.get("/products/:id", ProductController.ProductListByRemark);
-productRouter.get("/products/:id", ProductController.ProductDetails);
-productRouter.post("/products/:id", ProductController.CreateProductReview);
+productRouter.get("/ProductBrandList", ProductController.ProductBrandList);
+productRouter.get(
+  "/ProductCategoryList",
+  ProductController.ProductCategoryList
+);
+productRouter.get("/ProductSliderList", ProductController.ProductSliderList);
+productRouter.get(
+  "/ProductListByBrand/:BrandID",
+  ProductController.ProductListByBrand
+);
+productRouter.get(
+  "/ProductListBySemilier/:Keyword",
+  ProductController.ProductListBySemilier
+);
+productRouter.get(
+  "/ProductListByKeywork/:Keyword",
+  ProductController.ProductListByKeywork
+);
+productRouter.get(
+  "/ProductReviewList/:ProductID",
+  ProductController.ProductReviewList
+);
+productRouter.get(
+  "/ProductListByRemark/:Remark",
+  ProductController.ProductListByRemark
+);
+productRouter.get(
+  "/ProductDetails/:ProductID",
+  ProductController.ProductDetails
+);
+productRouter.get(
+  "/CreateProductReview",
+  ProductController.CreateProductReview
+);
 
 module.exports = productRouter;
