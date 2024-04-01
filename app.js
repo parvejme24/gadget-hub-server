@@ -10,6 +10,7 @@ const xss = require("xss-clean");
 const hpp = require("hpp");
 const cors = require("cors");
 const router = require("./src/api");
+const { errorResponse } = require("./src/controllers/ResponseController");
 
 const app = express();
 
@@ -56,8 +57,8 @@ app.use((req, res, next) => {
 
 // server error
 app.use((err, req, res, next) => {
-  return res.status(err.status || 500).json({
-    success: false,
+  return errorResponse(res, {
+    statusCode: err.status,
     message: err.message,
   });
 });
