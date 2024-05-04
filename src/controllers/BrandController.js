@@ -25,6 +25,23 @@ exports.getBrandById = async (req, res) => {
   try {
     const { id } = req.params;
     const brand = await Brand.findById(id);
+    if (!brand) {
+      return res.status(404).json({ message: "Brand not found" });
+    }
+    res.json(brand);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get a brand by brandName
+exports.getBrandByBrandName = async (req, res) => {
+  try {
+    const { brandName } = req.params;
+    const brand = await Brand.findOne({ brandName });
+    if (!brand) {
+      return res.status(404).json({ message: "Brand not found" });
+    }
     res.json(brand);
   } catch (error) {
     res.status(500).json({ message: error.message });
