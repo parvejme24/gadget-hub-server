@@ -34,6 +34,20 @@ exports.getCategoryById = async (req, res) => {
   }
 };
 
+// get a category by category name
+exports.getCategoryByCategoryName = async (req, res) => {
+  try {
+    const { categoryName } = req.params;
+    const category = await Category.findOne({ categoryName });
+    if (!category) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    res.json(category);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // update category by categoryName
 exports.updateCategory = async (req, res) => {
   try {

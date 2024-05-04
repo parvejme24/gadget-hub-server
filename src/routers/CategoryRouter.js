@@ -8,12 +8,14 @@ const {
   getCategoryById,
   updateCategory,
   deleteCategory,
+  getCategoryByCategoryName,
 } = require("../controllers/CategoryController");
 
 // define product controller
 categoryRouter.post("/categories", addCategory);
 categoryRouter.get("/categories", getAllCategories);
 categoryRouter.get("/categories/:id", getCategoryById);
+categoryRouter.get("/categories/:categoryName", getCategoryByCategoryName);
 categoryRouter.put("/categories/:id", updateCategory);
 categoryRouter.delete("/categories/:id", deleteCategory);
 
