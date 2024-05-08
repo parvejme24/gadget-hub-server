@@ -20,4 +20,4 @@ brandRouter.put("/brands/:id", updateBrand);
 brandRouter.delete("/brands/:id", deleteBrand);
 
 // export products routers
-module.exports = productRouter;
+module.exports = brandRouter;

@@ -8,6 +8,9 @@ const WishSchema = mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
     },
+    userEmail: {
+      type: String,
+    },
   },
   { timestamp: true, versionKey: false }
 );

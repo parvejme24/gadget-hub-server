@@ -14,7 +14,7 @@ exports.addBrand = async (req, res) => {
 exports.getAllBrand = async (req, res) => {
   try {
     const brands = await Brand.find();
-    res.json({ brands });
+    res.json(brands);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
