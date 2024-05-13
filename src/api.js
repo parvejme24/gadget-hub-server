@@ -6,6 +6,8 @@ const routers = [
   require("./routers/ProductRouter"),
   require("./routers/CategoryRouter"),
   require("./routers/BrandRouter"),
+  require("./routers/WishlistRouter"),
+  
 ];
 
 // dynamically apply routers
