@@ -15,7 +15,7 @@ wishlistRouter.post("/wishlist", addToWishlist);
 wishlistRouter.get("/wishlist/:email", getWishlistItems);
 
 // remove wishliste router
-wishlistRouter.delete("/wishlist/:id", removeFromWishlist);
+wishlistRouter.delete("/wishlist/d/:id", removeFromWishlist);
 
 // export wishlist routers
 exports.default = wishlistRouter;

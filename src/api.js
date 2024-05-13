@@ -7,6 +7,7 @@ const routers = [
   require("./routers/CategoryRouter"),
   require("./routers/BrandRouter"),
   require("./routers/WishlistRouter"),
+  require("./routers/ReviewRouter"),
   
 ];
 

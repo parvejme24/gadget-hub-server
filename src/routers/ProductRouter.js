@@ -18,8 +18,8 @@ productRouter.post("/products", addProduct);
 productRouter.get("/products", getAllProducts);
 productRouter.get("/products/:id", getProductById);
 productRouter.get("/products/:title", getProductByTitle);
-productRouter.put("/products/:id", updateProduct);
-productRouter.delete("/products/:id", deleteProduct);
+productRouter.put("/products/u/:id", updateProduct);
+productRouter.delete("/products/d/:id", deleteProduct);
 productRouter.get("/products/category/:category", getProductsByCategory);
 productRouter.get("/products/brand/:brand", getProductsByBrand);
 
