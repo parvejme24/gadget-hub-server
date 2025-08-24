@@ -18,4 +18,4 @@ wishlistRouter.get("/wishlist/:email", getWishlistItems);
 wishlistRouter.delete("/wishlist/d/:id", removeFromWishlist);
 
 // export wishlist routers
-exports.default = wishlistRouter;
+module.exports = wishlistRouter;
