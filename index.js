@@ -1,37 +1,41 @@
-const { serverPort } = require("./src/secret");
-const http = require("http");
-const app = require("./app");
-const connectToDB = require("./src/config/db");
-const server = http.createServer(app);
+const app = require('./app');
+const { connectDB } = require('./shared/config/database');
+require('dotenv').config();
 
-const main = async () => {
-  await connectToDB();
-  
-  // Function to find an available port
-  const findAvailablePort = (startPort) => {
-    return new Promise((resolve, reject) => {
-      const net = require('net');
-      const server = net.createServer();
-      
-      server.listen(startPort, () => {
-        const port = server.address().port;
-        server.close(() => resolve(port));
-      });
-      
-      server.on('error', () => {
-        findAvailablePort(startPort + 1).then(resolve);
-      });
-    });
-  };
+const PORT = process.env.PORT || 5000;
 
-  // Find available port and start server
-  findAvailablePort(serverPort).then(port => {
-    server.listen(port, () => {
-      console.log(
-        `Gadget Hub server is running on: http://localhost:${port}`
-      );
+// Connect to database
+const startServer = async () => {
+  try {
+    // Try to connect to MongoDB, but don't fail if it's not available
+    try {
+      await connectDB();
+    } catch (dbError) {
+      console.warn('⚠️  MongoDB connection failed, but server will continue:', dbError.message);
+      console.log('💡 Make sure MongoDB is running or set MONGODB_URI in your .env file');
+    }
+    
+    app.listen(PORT, () => {
+      console.log(`🚀 Server is running on port ${PORT}`);
+      console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🏠 Home: http://localhost:${PORT}/`);
     });
-  });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
 };
 
-main();
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Promise Rejection:', err);
+  process.exit(1);
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
+});
+
+startServer();
