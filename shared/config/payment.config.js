@@ -19,8 +19,8 @@ const sslCommerzConfig = {
     : 'https://securepay.sslcommerz.com'
 };
 
-// Initialize Stripe
-const stripeInstance = stripe(stripeConfig.secretKey);
+// Initialize Stripe only if secret key is available
+const stripeInstance = stripeConfig.secretKey ? stripe(stripeConfig.secretKey) : null;
 
 // Payment Methods Configuration
 const paymentMethods = {

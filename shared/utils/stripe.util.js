@@ -1,4 +1,4 @@
-const { stripe, stripeConfig } = require('../config/payment.config');
+const { stripe: stripeInstance, stripeConfig } = require('../config/payment.config');
 const ResponseUtil = require('./response.util');
 
 class StripeUtil {
@@ -7,7 +7,14 @@ class StripeUtil {
    */
   static async createPaymentIntent(amount, currency = 'usd', metadata = {}) {
     try {
-      const paymentIntent = await stripe.paymentIntents.create({
+      if (!stripeInstance) {
+        return {
+          success: false,
+          error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.'
+        };
+      }
+
+      const paymentIntent = await stripeInstance.paymentIntents.create({
         amount: Math.round(amount * 100), // Convert to cents
         currency: currency.toLowerCase(),
         metadata,
@@ -38,7 +45,14 @@ class StripeUtil {
    */
   static async confirmPayment(paymentIntentId) {
     try {
-      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      if (!stripeInstance) {
+        return {
+          success: false,
+          error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.'
+        };
+      }
+
+      const paymentIntent = await stripeInstance.paymentIntents.retrieve(paymentIntentId);
       
       if (paymentIntent.status === 'succeeded') {
         return {
@@ -69,7 +83,14 @@ class StripeUtil {
    */
   static async processRefund(paymentIntentId, amount) {
     try {
-      const refund = await stripe.refunds.create({
+      if (!stripeInstance) {
+        return {
+          success: false,
+          error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.'
+        };
+      }
+
+      const refund = await stripeInstance.refunds.create({
         payment_intent: paymentIntentId,
         amount: Math.round(amount * 100) // Convert to cents
       });
@@ -95,7 +116,14 @@ class StripeUtil {
    */
   static verifyWebhookSignature(payload, signature) {
     try {
-      const event = stripe.webhooks.constructEvent(
+      if (!stripeInstance) {
+        return {
+          success: false,
+          error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.'
+        };
+      }
+
+      const event = stripeInstance.webhooks.constructEvent(
         payload,
         signature,
         stripeConfig.webhookSecret
@@ -118,7 +146,14 @@ class StripeUtil {
    */
   static async getPaymentMethod(paymentMethodId) {
     try {
-      const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
+      if (!stripeInstance) {
+        return {
+          success: false,
+          error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.'
+        };
+      }
+
+      const paymentMethod = await stripeInstance.paymentMethods.retrieve(paymentMethodId);
       return {
         success: true,
         paymentMethod

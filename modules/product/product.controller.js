@@ -1,34 +1,44 @@
-const ProductModel = require('./product.model');
-const ResponseUtil = require('../../shared/utils/response.util');
-const UploadUtil = require('../../shared/utils/upload.util');
+const ProductModel = require("./product.model");
+const ResponseUtil = require("../../shared/utils/response.util");
+const UploadUtil = require("../../shared/utils/upload.util");
 
 class ProductController {
   async createProduct(req, res, next) {
     try {
       const productData = { ...req.body };
-      
+
       // Handle image upload if file is present
       if (req.file) {
         const uploadResult = await UploadUtil.uploadImage(
-          req.file.buffer, 
-          'gadget-brust/products',
+          req.file.buffer,
+          "gadget-brust/products",
           `product_${Date.now()}`
         );
-        
+
         if (!uploadResult.success) {
           return ResponseUtil.badRequest(res, uploadResult.error);
         }
-        
+
         productData.image = {
           url: uploadResult.url,
           publicId: uploadResult.publicId,
-          assetId: uploadResult.assetId
+          assetId: uploadResult.assetId,
         };
       }
-      
+
       const product = new ProductModel(productData);
       const savedProduct = await product.save();
-      return ResponseUtil.created(res, savedProduct, 'Product created successfully');
+
+      // Populate the relationships for the response
+      await savedProduct.populate("category");
+      await savedProduct.populate("subcategory");
+      await savedProduct.populate("brand");
+
+      return ResponseUtil.created(
+        res,
+        savedProduct,
+        "Product created successfully"
+      );
     } catch (error) {
       next(error);
     }
@@ -37,10 +47,15 @@ class ProductController {
   async getAllProducts(req, res, next) {
     try {
       const products = await ProductModel.find()
-        .populate('category', 'categoryName')
-        .populate('brand', 'brandName');
-      
-      return ResponseUtil.success(res, products, 'Products retrieved successfully');
+        .populate("category")
+        .populate("subcategory")
+        .populate("brand");
+
+      return ResponseUtil.success(
+        res,
+        products,
+        "Products retrieved successfully"
+      );
     } catch (error) {
       next(error);
     }
@@ -49,13 +64,18 @@ class ProductController {
   async getProductById(req, res, next) {
     try {
       const product = await ProductModel.findById(req.params.id)
-        .populate('category', 'categoryName')
-        .populate('brand', 'brandName');
-      
+        .populate("category")
+        .populate("subcategory")
+        .populate("brand");
+
       if (!product) {
-        return ResponseUtil.notFound(res, 'Product not found');
+        return ResponseUtil.notFound(res, "Product not found");
       }
-      return ResponseUtil.success(res, product, 'Product retrieved successfully');
+      return ResponseUtil.success(
+        res,
+        product,
+        "Product retrieved successfully"
+      );
     } catch (error) {
       next(error);
     }
@@ -64,43 +84,51 @@ class ProductController {
   async updateProduct(req, res, next) {
     try {
       const updateData = { ...req.body };
-      
+
       // Handle image upload if file is present
       if (req.file) {
         // Get current product to check if it has an image
         const currentProduct = await ProductModel.findById(req.params.id);
         if (!currentProduct) {
-          return ResponseUtil.notFound(res, 'Product not found');
+          return ResponseUtil.notFound(res, "Product not found");
         }
-        
+
         // Delete old image if exists
         if (currentProduct.image && currentProduct.image.publicId) {
           await UploadUtil.deleteImage(currentProduct.image.publicId);
         }
-        
+
         // Upload new image
         const uploadResult = await UploadUtil.uploadImage(
-          req.file.buffer, 
-          'gadget-brust/products',
+          req.file.buffer,
+          "gadget-brust/products",
           `product_${Date.now()}`
         );
-        
+
         if (!uploadResult.success) {
           return ResponseUtil.badRequest(res, uploadResult.error);
         }
-        
+
         updateData.image = {
           url: uploadResult.url,
           publicId: uploadResult.publicId,
-          assetId: uploadResult.assetId
+          assetId: uploadResult.assetId,
         };
       }
-      
-      const product = await ProductModel.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
+
+      const product = await ProductModel.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        { new: true, runValidators: true }
+      )
+        .populate("category")
+        .populate("subcategory")
+        .populate("brand");
+
       if (!product) {
-        return ResponseUtil.notFound(res, 'Product not found');
+        return ResponseUtil.notFound(res, "Product not found");
       }
-      return ResponseUtil.success(res, product, 'Product updated successfully');
+      return ResponseUtil.success(res, product, "Product updated successfully");
     } catch (error) {
       next(error);
     }
@@ -110,17 +138,17 @@ class ProductController {
     try {
       const product = await ProductModel.findById(req.params.id);
       if (!product) {
-        return ResponseUtil.notFound(res, 'Product not found');
+        return ResponseUtil.notFound(res, "Product not found");
       }
-      
+
       // Delete image from Cloudinary if exists
       if (product.image && product.image.publicId) {
         await UploadUtil.deleteImage(product.image.publicId);
       }
-      
+
       // Delete product
       await ProductModel.findByIdAndDelete(req.params.id);
-      return ResponseUtil.success(res, null, 'Product deleted successfully');
+      return ResponseUtil.success(res, null, "Product deleted successfully");
     } catch (error) {
       next(error);
     }
@@ -129,12 +157,17 @@ class ProductController {
   async getProductsByCategory(req, res, next) {
     try {
       const { categoryId } = req.params;
-      
+
       const products = await ProductModel.find({ category: categoryId })
-        .populate('category', 'categoryName')
-        .populate('brand', 'brandName');
-      
-      return ResponseUtil.success(res, products, 'Products by category retrieved successfully');
+        .populate("category")
+        .populate("subcategory")
+        .populate("brand");
+
+      return ResponseUtil.success(
+        res,
+        products,
+        "Products by category retrieved successfully"
+      );
     } catch (error) {
       next(error);
     }
@@ -143,12 +176,36 @@ class ProductController {
   async getProductsByBrand(req, res, next) {
     try {
       const { brandId } = req.params;
-      
+
       const products = await ProductModel.find({ brand: brandId })
-        .populate('category', 'categoryName')
-        .populate('brand', 'brandName');
-      
-      return ResponseUtil.success(res, products, 'Products by brand retrieved successfully');
+        .populate("category")
+        .populate("subcategory")
+        .populate("brand");
+
+      return ResponseUtil.success(
+        res,
+        products,
+        "Products by brand retrieved successfully"
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getProductsBySubcategory(req, res, next) {
+    try {
+      const { subcategoryId } = req.params;
+
+      const products = await ProductModel.find({ subcategory: subcategoryId })
+        .populate("category")
+        .populate("subcategory")
+        .populate("brand");
+
+      return ResponseUtil.success(
+        res,
+        products,
+        "Products by subcategory retrieved successfully"
+      );
     } catch (error) {
       next(error);
     }
@@ -157,12 +214,17 @@ class ProductController {
   async getProductsByRemark(req, res, next) {
     try {
       const { remark } = req.params;
-      
+
       const products = await ProductModel.find({ remark })
-        .populate('category', 'categoryName')
-        .populate('brand', 'brandName');
-      
-      return ResponseUtil.success(res, products, 'Products by remark retrieved successfully');
+        .populate("category")
+        .populate("subcategory")
+        .populate("brand");
+
+      return ResponseUtil.success(
+        res,
+        products,
+        "Products by remark retrieved successfully"
+      );
     } catch (error) {
       next(error);
     }
@@ -171,10 +233,15 @@ class ProductController {
   async getSliderProducts(req, res, next) {
     try {
       const products = await ProductModel.find({ isSlider: true })
-        .populate('category', 'categoryName')
-        .populate('brand', 'brandName');
-      
-      return ResponseUtil.success(res, products, 'Slider products retrieved successfully');
+        .populate("category")
+        .populate("subcategory")
+        .populate("brand");
+
+      return ResponseUtil.success(
+        res,
+        products,
+        "Slider products retrieved successfully"
+      );
     } catch (error) {
       next(error);
     }
@@ -183,10 +250,15 @@ class ProductController {
   async getDiscountedProducts(req, res, next) {
     try {
       const products = await ProductModel.find({ discount: { $gt: 0 } })
-        .populate('category', 'categoryName')
-        .populate('brand', 'brandName');
-      
-      return ResponseUtil.success(res, products, 'Discounted products retrieved successfully');
+        .populate("category")
+        .populate("subcategory")
+        .populate("brand");
+
+      return ResponseUtil.success(
+        res,
+        products,
+        "Discounted products retrieved successfully"
+      );
     } catch (error) {
       next(error);
     }
@@ -195,11 +267,16 @@ class ProductController {
   async getCheapestProducts(req, res, next) {
     try {
       const products = await ProductModel.find()
-        .populate('category', 'categoryName')
-        .populate('brand', 'brandName')
+        .populate("category")
+        .populate("subcategory")
+        .populate("brand")
         .sort({ price: 1 });
-      
-      return ResponseUtil.success(res, products, 'Cheapest products retrieved successfully');
+
+      return ResponseUtil.success(
+        res,
+        products,
+        "Cheapest products retrieved successfully"
+      );
     } catch (error) {
       next(error);
     }
@@ -208,29 +285,16 @@ class ProductController {
   async getNewestProducts(req, res, next) {
     try {
       const products = await ProductModel.find()
-        .populate('category', 'categoryName')
-        .populate('brand', 'brandName')
+        .populate("category")
+        .populate("subcategory")
+        .populate("brand")
         .sort({ createdAt: -1 });
-      
-      return ResponseUtil.success(res, products, 'Newest products retrieved successfully');
-    } catch (error) {
-      next(error);
-    }
-  }
 
-  async searchProducts(req, res, next) {
-    try {
-      const { q: searchTerm } = req.query;
-      
-      const searchQuery = {
-        $text: { $search: searchTerm }
-      };
-      
-      const products = await ProductModel.find(searchQuery)
-        .populate('category', 'categoryName')
-        .populate('brand', 'brandName');
-      
-      return ResponseUtil.success(res, products, 'Products found successfully');
+      return ResponseUtil.success(
+        res,
+        products,
+        "Newest products retrieved successfully"
+      );
     } catch (error) {
       next(error);
     }

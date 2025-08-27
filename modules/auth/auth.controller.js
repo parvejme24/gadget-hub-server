@@ -220,6 +220,137 @@ class AuthController {
       next(error);
     }
   }
+
+  // Additional user management methods (admin only)
+  async createUser(req, res, next) {
+    try {
+      // Check if user is admin
+      if (req.user.role !== 'admin') {
+        return ResponseUtil.forbidden(res, 'Access denied. Admin only.');
+      }
+
+      const { fullName, email, password, role = 'user' } = req.body;
+
+      // Check if user already exists
+      const existingUser = await UserModel.findOne({ email: email.toLowerCase() });
+      if (existingUser) {
+        return ResponseUtil.badRequest(res, 'User with this email already exists');
+      }
+
+      // Hash password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      // Create user
+      const user = new UserModel({
+        fullName,
+        email: email.toLowerCase(),
+        password: hashedPassword,
+        role
+      });
+
+      const savedUser = await user.save();
+
+      // Remove password from response
+      const userResponse = {
+        _id: savedUser._id,
+        fullName: savedUser.fullName,
+        email: savedUser.email,
+        role: savedUser.role,
+        createdAt: savedUser.createdAt
+      };
+
+      return ResponseUtil.created(res, userResponse, 'User created successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getUserById(req, res, next) {
+    try {
+      // Check if user is admin
+      if (req.user.role !== 'admin') {
+        return ResponseUtil.forbidden(res, 'Access denied. Admin only.');
+      }
+
+      const user = await UserModel.findById(req.params.id).select('-password');
+      if (!user) {
+        return ResponseUtil.notFound(res, 'User not found');
+      }
+      return ResponseUtil.success(res, user, 'User retrieved successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateUser(req, res, next) {
+    try {
+      // Check if user is admin
+      if (req.user.role !== 'admin') {
+        return ResponseUtil.forbidden(res, 'Access denied. Admin only.');
+      }
+
+      const updateData = req.body;
+
+      // If password is being updated, hash it
+      if (updateData.password) {
+        const salt = await bcrypt.genSalt(10);
+        updateData.password = await bcrypt.hash(updateData.password, salt);
+      }
+
+      const user = await UserModel.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        { new: true, runValidators: true }
+      ).select('-password');
+
+      if (!user) {
+        return ResponseUtil.notFound(res, 'User not found');
+      }
+      return ResponseUtil.success(res, user, 'User updated successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteUser(req, res, next) {
+    try {
+      // Check if user is admin
+      if (req.user.role !== 'admin') {
+        return ResponseUtil.forbidden(res, 'Access denied. Admin only.');
+      }
+
+      const user = await UserModel.findByIdAndDelete(req.params.id);
+      if (!user) {
+        return ResponseUtil.notFound(res, 'User not found');
+      }
+
+      // Remove refresh tokens
+      await RefreshTokenModel.deleteMany({ userId: req.params.id });
+
+      return ResponseUtil.success(res, null, 'User deleted successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getUserByEmail(req, res, next) {
+    try {
+      // Check if user is admin
+      if (req.user.role !== 'admin') {
+        return ResponseUtil.forbidden(res, 'Access denied. Admin only.');
+      }
+
+      const { email } = req.params;
+      const user = await UserModel.findOne({ email: email.toLowerCase() }).select('-password');
+      if (!user) {
+        return ResponseUtil.notFound(res, 'User not found');
+      }
+      return ResponseUtil.success(res, user, 'User retrieved successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new AuthController();

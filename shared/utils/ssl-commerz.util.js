@@ -8,6 +8,13 @@ class SSLCommerzUtil {
    */
   static async createSession(paymentData) {
     try {
+      if (!sslCommerzConfig.storeId || !sslCommerzConfig.storePassword) {
+        return {
+          success: false,
+          error: 'SSL Commerz is not configured. Please set SSL_COMMERZ_STORE_ID and SSL_COMMERZ_STORE_PASSWORD environment variables.'
+        };
+      }
+
       const {
         amount,
         currency = 'BDT',
@@ -89,6 +96,13 @@ class SSLCommerzUtil {
    */
   static async verifyPayment(sessionKey) {
     try {
+      if (!sslCommerzConfig.storeId || !sslCommerzConfig.storePassword) {
+        return {
+          success: false,
+          error: 'SSL Commerz is not configured. Please set SSL_COMMERZ_STORE_ID and SSL_COMMERZ_STORE_PASSWORD environment variables.'
+        };
+      }
+
       const verifyData = {
         sessionkey: sessionKey,
         store_id: sslCommerzConfig.storeId,
@@ -139,6 +153,13 @@ class SSLCommerzUtil {
    */
   static async processRefund(refundData) {
     try {
+      if (!sslCommerzConfig.storeId || !sslCommerzConfig.storePassword) {
+        return {
+          success: false,
+          error: 'SSL Commerz is not configured. Please set SSL_COMMERZ_STORE_ID and SSL_COMMERZ_STORE_PASSWORD environment variables.'
+        };
+      }
+
       const {
         bank_tran_id,
         refe_id,
@@ -192,6 +213,13 @@ class SSLCommerzUtil {
    */
   static validateCallback(data) {
     try {
+      if (!sslCommerzConfig.storePassword) {
+        return {
+          isValid: false,
+          error: 'SSL Commerz is not configured. Please set SSL_COMMERZ_STORE_PASSWORD environment variable.'
+        };
+      }
+
       const {
         verify_sign,
         verify_key,
